@@ -46,23 +46,34 @@ inline link dequeue(queue<link>& q) {
 }
 
 void decomposeList(queue<link>& fq, link& h) {
-    link q;
+    link q, t, t2;
     while (h != nullptr) {
-        link t = h; 
+        t = h; 
         while (h && h->next) {
             if (h->next->info > h->info) h = h->next;
             else break; 
         }
-        if (h->next != nullptr) {
+        if (t != h && h->next != nullptr) { 
+            //found a naturally occuring run
             q = h->next;
             h->next = nullptr;
             h = q;
+        } else if (t == h && h->next) {
+            //found a singleton: swap positions with neighbor 
+            //push new run of length 2 on to the queue.
+            t2 = h->next;
+            h = t2->next;
+            t2->next = t; 
+            t->next = nullptr;
+            t = t2;
         } else {
+            //land here if theres a left over node at the end
             h = h->next;
         }
-        fq.push(t);        
+        fq.push(t);
     }
 } 
+
 
 void mergesort(link& h) {
     queue<link> fq;
